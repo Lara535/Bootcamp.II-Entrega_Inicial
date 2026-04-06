@@ -1,2 +1,3 @@
-# Bootcamp.II-Entrega_Inicial
-Aplicação do Fics On Shelf (FOS): Projeto focado em atender ao desafio prático.
+# FOS CLI
+
+info nescessarias pára entendimento, instalaçao e uso
