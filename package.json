@@ -1,15 +1,20 @@
 {
-  "name": "fos_cli",
+  "name": "fos-cli",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Um gerenciador de linha de comando para organizar fanfics e criar uma estante local.",
+  "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cli",
+    "fanfics",
+    "organizador",
+    "leitura"
+  ],
+  "author": "Lara Abreu Costa de Freitas",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "readline-sync": "^1.4.10"
   }
