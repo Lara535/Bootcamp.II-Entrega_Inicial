@@ -1,0 +1,29 @@
+name: CI Pipeline (Lint e Testes)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  inspecao-de-codigo:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Baixando o código do repositório
+      uses: actions/checkout@v4
+
+    - name: Configurando o Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' 
+
+    - name: Instalando as dependências
+      run: npm install
+
+    - name: Executando o Linting
+      run: npm run lint
+
+    - name: Executando os Testes Automatizados
+      run: npm test
