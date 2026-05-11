@@ -1,4 +1,7 @@
 # BootCamp II: Fics On Shelf (FOS CLI)
+
+🟢 **Link de Deploy (Replit):** [Clique aqui para testar a aplicação na nuvem](https://replit.com/@laraacfreitas/BootcampII-EntregaInicial)
+
 ### **`Autor:`**  
 Lara Abreu Costa de Freitas
 ---
