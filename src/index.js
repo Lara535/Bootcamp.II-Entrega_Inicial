@@ -2,6 +2,7 @@ const readline = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
 const { adicionarFanfic } = require('./manager'); 
+const { buscarCitacao } = require('./api');
 
 const dbPath = path.join(__dirname, '..', 'fics.json');
 
@@ -17,11 +18,15 @@ function saveFics(fics) {
   fs.writeFileSync(dbPath, JSON.stringify(fics, null, 2));
 }
 
-function main(){
+async function main(){
   console.log('\n=======================================================');
   console.log('💜😸 Bem-vindo(a) ao FOS CLI - Sua Estante de Fanfics!');
   console.log('=======================================================\n');  
 
+  console.log('Buscando inspiração do dia...');
+  const citacao = await buscarCitacao();
+  console.log(`💡 ${citacao}\n`);
+  
   const nome = readline.question('> Nome da Fanfic: ');
   const autor = readline.question('> Autor: ');
   const plataforma = readline.question('> Plataforma (ex: AO3, Wattpad): ');
