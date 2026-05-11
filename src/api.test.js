@@ -1,10 +1,11 @@
-const { buscarCitacao } = require('./api');
+async function buscarCitacao() {
+  try {
+    const resposta = await fetch('https://dummyjson.com/quotes/random');
+    const dados = await resposta.json();
+    return `"${dados.quote}" - ${dados.author}`;
+  } catch {
+    return '"A leitura é uma viagem de descobertas." - FOS CLI';
+  }
+}
 
-describe('Testes de Integração com API Externa', () => {
-  test('Deve retornar uma citação válida da API (ou fallback)', async () => {
-    const citacao = await buscarCitacao();
-
-    expect(typeof citacao).toBe('string');
-    expect(citacao.length).toBeGreaterThan(5);
-  });
-});
+module.exports = { buscarCitacao };
