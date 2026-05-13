@@ -1,18 +1,19 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-
-export default [
+module.exports = [
   {
-    languageOptions: { 
+    languageOptions: {
       globals: {
-        ...globals.node,
-        ...globals.jest,
-        fetch: "readonly" 
-      } 
-    } 
-  },
-  pluginJs.configs.recommended,
-  {
+        fetch: "readonly",
+        console: "readonly",
+        process: "readonly",
+        require: "readonly",
+        module: "readonly",
+        __dirname: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        jest: "readonly"
+      }
+    },
     rules: {
       "no-undef": "off",
       "no-unused-vars": "warn"
