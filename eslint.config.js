@@ -1,23 +1,20 @@
-const js = require("@eslint/js");
+import globals from "globals";
+import pluginJs from "@eslint/js";
 
-module.exports = [
-  js.configs.recommended,
+export default [
   {
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "commonjs",
+    languageOptions: { 
       globals: {
-        console: "readonly",
-        process: "readonly",
-        __dirname: "readonly",
-        require: "readonly",
-        module: "readonly",
-        describe: "readonly",
-        test: "readonly",
-        expect: "readonly"
-      }
-    },
+        ...globals.node,
+        ...globals.jest,
+        fetch: "readonly" 
+      } 
+    } 
+  },
+  pluginJs.configs.recommended,
+  {
     rules: {
+      "no-undef": "off",
       "no-unused-vars": "warn"
     }
   }
