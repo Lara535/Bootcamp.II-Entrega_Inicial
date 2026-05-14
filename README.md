@@ -1,8 +1,7 @@
 # 💜 🐱 BootCamp II: Fics On Shelf (FOS CLI)
 
-**Um gerenciador de linha de comando para organizar fanfics e criar uma estante local.**
 
-🟢 **Link de Deploy (Replit):** [Clique aqui para testar a aplicação na nuvem](https://replit.com/@laraacfreitas/BootcampII-EntregaInicial)
+🟢 **Link de Deploy (Replit):** [Clique aqui para testar a aplicação na nuvem](https://lara535.github.io/Bootcamp.II-Entrega_Inicial/)
 
 ---
 
