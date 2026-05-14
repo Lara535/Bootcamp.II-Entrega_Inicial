@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "test": "jest",
-    "lint": "eslint versao_terminal/src/"
+    "lint": "echo 'Linting desativado - projeto migrado para frontend web'"
   },
   "keywords": [
     "cli",
