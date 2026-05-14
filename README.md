@@ -1,7 +1,7 @@
 # 💜 🐱 BootCamp II: Fics On Shelf (FOS CLI)
 
 
-🟢 **Link de Deploy (Replit):** [Clique aqui para testar a aplicação na nuvem](https://lara535.github.io/Bootcamp.II-Entrega_Inicial/)
+🟢 **Link de Deploy (GitHub Pages):** [Clique aqui para testar a aplicação na nuvem](https://lara535.github.io/Bootcamp.II-Entrega_Inicial/)
 
 ---
 
