@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto FOS - Interface Web</title>
+    <style>
+        :root {
+            --fundo-site: #0b0714;
+            --fundo-card: #1a122e;
+            --roxo-claro: #c084fc;
+            --roxo-vibrante: #9333ea;
+            --texto-principal: #f3f4f6;
+            --texto-secundario: #9ca3af;
+        }
+
+        body {
+            background-color: var(--fundo-site);
+            color: var(--texto-principal);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--fundo-card);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(192, 132, 252, 0.2);
+        }
+
+        h1 {
+            color: var(--roxo-claro);
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .conteudo {
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #texto-resultado {
+            font-size: 1.3rem;
+            line-height: 1.5;
+            font-style: italic;
+            margin: 15px 0;
+        }
+
+        #autor-resultado {
+            color: var(--roxo-claro);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        button {
+            background-color: var(--roxo-vibrante);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--roxo-claro);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(147, 51, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Projeto FOS</h1>
+        
+        <div class="conteudo">
+            <p id="texto-resultado">Clique no botão abaixo para testar a integração com a API.</p>
+            <p id="autor-resultado"></p>
+        </div>
+
+        <button onclick="consumirAPI()">Buscar Dados</button>
+    </div>
+
+    <script>
+        // Esta é a mesma lógica de fetch que você usou no terminal!
+        async function consumirAPI() {
+            const textoHTML = document.getElementById('texto-resultado');
+            const autorHTML = document.getElementById('autor-resultado');
+
+            // Mensagem de carregamento
+            textoHTML.innerText = "Carregando...";
+            autorHTML.innerText = "";
+
+            try {
+                // Aqui estamos reutilizando a lógica de conexão
+                const resposta = await fetch('https://dummyjson.com/quotes/random');
+                const dados = await resposta.json();
+
+                // Mostrando no site em vez de usar console.log()
+                textoHTML.innerText = `"${dados.quote}"`;
+                autorHTML.innerText = `- ${dados.author}`;
+
+            } catch (erro) {
+                textoHTML.innerText = "Erro ao conectar com a API. Verifique a internet.";
+                console.error("Erro:", erro);
+            }
+        }
+    </script>
+
+</body>
+</html>
