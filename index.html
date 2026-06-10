@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOS - Fanfic Organizer System</title>
+    <!--G/Adicionando biblioteca jsPDF-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --fundo-site: #0b0714;
@@ -119,7 +121,7 @@
             <h2>Sua Estante FOS</h2>
             <p style="font-size: 0.85rem; color: var(--texto-secundario);">Seus dados são seus. Ficam salvos no seu navegador (offline).</p>
             
-            <button class="btn-secundario" onclick="exportarParaJSON()" style="width: auto; margin-top: 0; margin-bottom: 15px;">📥 Fazer Backup dos Dados (.json)</button>
+            <button class="btn-secundario" onclick="exportarParaPDF()" style="width: auto; margin-top: 0; margin-bottom: 15px;">📥 Fazer Backup dos Dados (.pdf)</button>
             
             <div class="estante-grid" id="estante">
                 </div>
@@ -244,17 +246,114 @@
             });
         }
 
-        // Função 6: Exportar para .JSON
-        function exportarParaJSON() {
+        // Função 6: Exportar para .PDF
+        function exportarParaPDF() {
             if(minhasFanfics.length === 0) return alert("Sua estante está vazia!");
-            
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(minhasFanfics, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "minha_estante_FOS.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const roxo = [147, 51, 234];
+            const roxoClaro = [192, 132, 252];
+            const fundoCard = [26, 18, 46];
+            const cinza = [156, 163, 175];
+            const branco = [243, 244, 246];
+
+            // Fundo da página
+            doc.setFillColor(11, 7, 20);
+            doc.rect(0, 0, 210, 297, 'F');
+
+            // Cabeçalho
+            doc.setFillColor(...roxo);
+            doc.rect(0, 0, 210, 30, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Fics On Shelf', 105, 13, { align: 'center' });
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(220, 200, 255);
+            doc.text('Fanfic Organizer System - Backup da Estante', 105, 22, { align: 'center' });
+
+            // Data do backup
+            const agora = new Date();
+            const dataFormatada = agora.toLocaleDateString('pt-BR') + ' às ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            doc.setFontSize(8);
+            doc.setTextColor(...cinza);
+            doc.text(`Gerado em: ${dataFormatada}  |  Total: ${minhasFanfics.length} obra(s)`, 105, 38, { align: 'center' });
+
+            // Lista de obras
+            let y = 48;
+            const margemEsq = 14;
+            const larguraCard = 182;
+
+            minhasFanfics.forEach((fic, i) => {
+                const alturaCard = fic.link && fic.link !== '#' ? 32 : 27;
+
+                // Nova página se necessário
+                if (y + alturaCard > 280) {
+                    doc.addPage();
+                    doc.setFillColor(11, 7, 20);
+                    doc.rect(0, 0, 210, 297, 'F');
+                    y = 14;
+                }
+
+                // Card de fundo
+                doc.setFillColor(...fundoCard);
+                doc.roundedRect(margemEsq, y, larguraCard, alturaCard, 3, 3, 'F');
+
+                // Barra lateral roxa
+                doc.setFillColor(...roxo);
+                doc.rect(margemEsq, y, 3, alturaCard, 'F');
+
+                // Número do item
+                doc.setFontSize(7);
+                doc.setTextColor(...cinza);
+                doc.text(`#${String(i + 1).padStart(2, '0')}`, margemEsq + 7, y + 7);
+
+                // Título da obra
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(...roxoClaro);
+                const tituloTruncado = doc.splitTextToSize(fic.nome, larguraCard - 22);
+                doc.text(tituloTruncado[0], margemEsq + 20, y + 8);
+
+                // Autor e plataforma
+                doc.setFontSize(8.5);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(...branco);
+                doc.text(`Autor(a): `, margemEsq + 7, y + 17);
+                doc.setTextColor(...cinza);
+                doc.text(fic.autor || '—', margemEsq + 26, y + 17);
+
+                doc.setTextColor(...branco);
+                doc.text(`Plataforma: `, margemEsq + 90, y + 17);
+                doc.setTextColor(...cinza);
+                doc.text(fic.plataforma || '—', margemEsq + 115, y + 17);
+
+                // Link (se existir)
+                if (fic.link && fic.link !== '#') {
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(...roxo);
+                    const linkTruncado = fic.link.length > 70 ? fic.link.substring(0, 67) + '...' : fic.link;
+                    doc.text(`Link: ${linkTruncado}`, margemEsq + 7, y + 26);
+                }
+
+                y += alturaCard + 5;
+            });
+
+            // Rodapé
+            const totalPaginas = doc.getNumberOfPages();
+            for (let p = 1; p <= totalPaginas; p++) {
+                doc.setPage(p);
+                doc.setFillColor(11, 7, 20);
+                doc.rect(0, 287, 210, 10, 'F');
+                doc.setFontSize(7);
+                doc.setTextColor(...cinza);
+                doc.text(`FOS - Fics On Shelf  |  Página ${p} de ${totalPaginas}`, 105, 293, { align: 'center' });
+            }
+
+            doc.save('minha_estante_FOS.pdf');
         }
     </script>
 </body>
