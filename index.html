@@ -120,9 +120,16 @@
         <div class="painel" style="flex: 2; min-width: 100%;">
             <h2>Sua Estante FOS</h2>
             <p style="font-size: 0.85rem; color: var(--texto-secundario);">Seus dados são seus. Ficam salvos no seu navegador (offline).</p>
-            
-            <button class="btn-secundario" onclick="exportarParaPDF()" style="width: auto; margin-top: 0; margin-bottom: 15px;">📥 Fazer Backup dos Dados (.pdf)</button>
-            
+
+            <div id="contador-estante" style="font-size: 0.9rem; margin-bottom: 10px; color: var(--roxo-claro);">
+                📚 Total: <span id="total-obras">0</span> obra(s)
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="btn-secundario" onclick="exportarParaPDF()" style="width: auto; margin-top: 0;">📥 Fazer Backup dos Dados (.pdf)</button>
+                <button class="btn-secundario" onclick="limparEstante()" style="width: auto; margin-top: 0;">🗑️ Limpar Estante</button>
+            </div>
+
             <div class="estante-grid" id="estante">
                 </div>
         </div>
@@ -225,7 +232,9 @@
         // Função 5: Desenha as histórias na tela
         function renderizarEstante() {
             const estante = document.getElementById('estante');
-            estante.innerHTML = ''; 
+            estante.innerHTML = '';
+
+            document.getElementById('total-obras').textContent = minhasFanfics.length;
 
             if(minhasFanfics.length === 0) {
                 estante.innerHTML = "<p style='color: var(--texto-secundario);'>Sua estante local está vazia.</p>";
@@ -355,6 +364,15 @@
 
             doc.save('minha_estante_FOS.pdf');
         }
-    </script>
+
+        function limparEstante() {
+            if(confirm('⚠️ ATENÇÃO: Isso apagará TODAS as fanfics da sua estante permanentemente. Tem certeza?')) {
+                minhasFanfics = [];
+                salvarERenderizar();
+                alert('🗑️ Estante limpa com sucesso!');
+        }
+}
+
+</script>
 </body>
 </html>
