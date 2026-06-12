@@ -77,6 +77,44 @@
         .fanfic-card a:hover { text-decoration: underline; }
         
         .api-result { font-size: 0.9rem; margin-top: 15px; color: var(--texto-secundario); }
+
+        /* Modal de nome do arquivo */
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.ativo { display: flex; }
+        .modal-box {
+            background-color: var(--fundo-card);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%; max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: modal-pop 0.15s ease-out;
+        }
+        @keyframes modal-pop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-box h3 { margin: 0 0 5px 0; color: var(--roxo-claro); }
+        .modal-box p { margin: 0 0 15px 0; font-size: 0.85rem; color: var(--texto-secundario); }
+        .modal-input-wrapper { display: flex; align-items: center; }
+        .modal-input-wrapper input { border-radius: 6px 0 0 6px; flex: 1; }
+        .modal-extensao {
+            background-color: #0b0714;
+            border: 1px solid var(--roxo-vibrante);
+            border-left: none;
+            color: var(--texto-secundario);
+            padding: 10px 12px; margin-top: 5px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+        }
+        .modal-botoes { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-botoes button { margin-top: 0; flex: 1; }
     </style>
 </head>
 <body>
@@ -259,6 +297,25 @@
         function exportarParaPDF() {
             if(minhasFanfics.length === 0) return alert("Sua estante está vazia!");
 
+            document.getElementById('input-nome-arquivo').value = 'minha_estante_FOS';
+            document.getElementById('modal-nome-arquivo').classList.add('ativo');
+            document.getElementById('input-nome-arquivo').focus();
+        }
+
+        function fecharModalNomeArquivo() {
+            document.getElementById('modal-nome-arquivo').classList.remove('ativo');
+        }
+
+        function confirmarExportacaoPDF() {
+            let nomeArquivo = document.getElementById('input-nome-arquivo').value.trim();
+            if(!nomeArquivo) nomeArquivo = 'minha_estante_FOS';
+            nomeArquivo = nomeArquivo.replace(/\.pdf$/i, '');
+
+            fecharModalNomeArquivo();
+            gerarPDF(nomeArquivo);
+        }
+
+        function gerarPDF(nomeArquivo) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
@@ -362,8 +419,15 @@
                 doc.text(`FOS - Fics On Shelf  |  Página ${p} de ${totalPaginas}`, 105, 293, { align: 'center' });
             }
 
-            doc.save('minha_estante_FOS.pdf');
+            doc.save(`${nomeArquivo}.pdf`);
         }
+
+        // Permite confirmar com Enter no input do modal
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('input-nome-arquivo').addEventListener('keydown', function(e) {
+                if(e.key === 'Enter') confirmarExportacaoPDF();
+            });
+        });
 
         function limparEstante() {
             if(confirm('⚠️ ATENÇÃO: Isso apagará TODAS as fanfics da sua estante permanentemente. Tem certeza?')) {
@@ -373,6 +437,22 @@
         }
 }
 
-</script>
+    </script>
+
+    <div class="modal-overlay" id="modal-nome-arquivo">
+        <div class="modal-box">
+            <h3>📥 Exportar Backup</h3>
+            <p>Digite o nome do arquivo PDF que será baixado:</p>
+            <div class="modal-input-wrapper">
+                <input type="text" id="input-nome-arquivo" placeholder="Ex: minha_estante_FOS">
+                <span class="modal-extensao">.pdf</span>
+            </div>
+            <div class="modal-botoes">
+                <button class="btn-secundario" onclick="fecharModalNomeArquivo()">Cancelar</button>
+                <button class="btn-confirmar" onclick="confirmarExportacaoPDF()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
