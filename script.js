@@ -159,12 +159,15 @@ function exportarParaPDF() {
     doc.setFillColor(11, 7, 20);
     doc.rect(0, 0, 210, 297, 'F');
 
+    const tituloPersonalizado = document.getElementById('titulo-pdf').value.trim();
+    const tituloPDF = tituloPersonalizado || 'Fics On Shelf';
+
     doc.setFillColor(...roxo);
     doc.rect(0, 0, 210, 30, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('Fics On Shelf', 105, 13, { align: 'center' });
+    doc.text(tituloPDF, 105, 13, { align: 'center' });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(220, 200, 255);
@@ -238,7 +241,10 @@ function exportarParaPDF() {
         doc.text(`FOS - Fics On Shelf  |  Página ${p} de ${totalPaginas}`, 105, 293, { align: 'center' });
     }
 
-    doc.save('minha_estante_FOS.pdf');
+    const nomeArquivo = tituloPersonalizado
+        ? tituloPersonalizado.replace(/[^a-zA-Z0-9À-ÿ _-]/g, '').trim().replace(/\s+/g, '_') + '.pdf'
+        : 'minha_estante_FOS.pdf';
+    doc.save(nomeArquivo || 'minha_estante_FOS.pdf');
 }
 
 function limparEstante() {
