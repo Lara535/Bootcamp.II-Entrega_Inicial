@@ -1,6 +1,6 @@
 let minhasFanfics = [];
 let obraEncontradaTemporaria = null;
-const API_URL = "http://localhost:3000/api/fanfics";
+const API_URL = "https://bootcamp-ii-entrega-inicial.onrender.com/api/fanfics";
 
 // Ao carregar a página, puxa os dados salvos no Banco de Dados Neon
 window.onload = async function() {
