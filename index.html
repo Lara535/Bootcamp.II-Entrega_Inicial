@@ -14,7 +14,6 @@
         <h1>Fics On Shelf</h1>
         <p>FOS - A sua estante de dados centralizada.</p>
     </div>
-
     <div class="container">
         <div class="painel">
             <h2>Inserção Manual Direta</h2>
@@ -54,8 +53,9 @@
                 📚 Total: <span id="total-obras">0</span> obra(s)
             </div>
 
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button class="btn-secundario" onclick="exportarParaPDF()" style="width: auto; margin-top: 0;">📥 Fazer Backup dos Dados (.pdf)</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="titulo-pdf" placeholder="Nome do arquivo/título do PDF (opcional)" style="flex: 1; min-width: 200px; margin: 0;">
+                <button class="btn-pdf" onclick="exportarParaPDF()">📥 Fazer Backup dos Dados (.pdf)</button>
                 <button class="btn-secundario" onclick="limparEstante()" style="width: auto; margin-top: 0;">🗑️ Limpar Estante</button>
             </div>
 

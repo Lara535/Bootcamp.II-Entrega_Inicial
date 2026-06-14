@@ -60,6 +60,27 @@ button:hover { background-color: var(--roxo-claro); }
 .btn-secundario { background-color: transparent; border: 1px solid var(--roxo-claro); color: var(--roxo-claro); margin-top: 10px;}
 .btn-secundario:hover { background-color: rgba(192, 132, 252, 0.1); }
 
+.btn-pdf {
+    background: linear-gradient(135deg, var(--roxo-vibrante), var(--roxo-claro));
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);
+}
+.btn-pdf:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(192, 132, 252, 0.6);
+}
+.btn-pdf:active {
+    transform: translateY(0);
+}
+
 .estante-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
 .fanfic-card { background-color: #0b0714; padding: 15px; border-radius: 8px; border-left: 4px solid var(--roxo-vibrante); }
 .fanfic-card h3 { margin: 0 0 5px 0; color: var(--roxo-claro); }
@@ -68,3 +89,57 @@ button:hover { background-color: var(--roxo-claro); }
 .fanfic-card a:hover { text-decoration: underline; }
 
 .api-result { font-size: 0.9rem; margin-top: 15px; color: var(--texto-secundario); }
+
+.modal-overlay {
+
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    align-items: center; justify-content: center;
+    z-index: 1000;
+
+}
+
+.modal-overlay.ativo { display: flex; }
+
+.modal-box {
+
+    background-color: var(--fundo-card);
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    border-radius: 12px;
+    padding: 25px;
+    width: 90%; max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: modal-pop 0.15s ease-out;
+
+}
+
+@keyframes modal-pop {
+
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+
+}
+
+.modal-box h3 { margin: 0 0 5px 0; color: var(--roxo-claro); }
+
+.modal-box p { margin: 0 0 15px 0; font-size: 0.85rem; color: var(--texto-secundario); }
+
+.modal-input-wrapper { display: flex; align-items: center; }
+
+.modal-input-wrapper input { border-radius: 6px 0 0 6px; flex: 1; }
+
+.modal-extensao {
+
+    background-color: #0b0714;
+    border: 1px solid var(--roxo-vibrante);
+    border-left: none;
+    color: var(--texto-secundario);
+    padding: 10px 12px; margin-top: 5px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.9rem;
+
+}
+
+.modal-botoes { display: flex; gap: 10px; margin-top: 20px; }
+.modal-botoes button { margin-top: 0; flex: 1; }

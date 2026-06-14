@@ -1,23 +1,39 @@
 let minhasFanfics = [];
 let obraEncontradaTemporaria = null;
+const API_URL = "https://bootcamp-ii-entrega-inicial.onrender.com/api/fanfics";
 
-// Ao carregar a página, puxa os dados salvos no navegador
-window.onload = function() {
-    const dadosSalvos = localStorage.getItem('fos_database');
-    if(dadosSalvos) {
-        minhasFanfics = JSON.parse(dadosSalvos);
-        renderizarEstante();
-    }
+// Ao carregar a página, puxa os dados salvos no Banco de Dados Neon
+window.onload = async function() {
+    await carregarEstanteDoBanco();
 };
 
+// FUNÇÃO NOVA: Busca os dados do seu servidor backend
+async function carregarEstanteDoBanco() {
+    try {
+        const resposta = await fetch(API_URL);
+        const dadosDoBanco = await resposta.json();
+        
+        // Mapeia o 'titulo' que vem do banco para o 'nome' que o seu front-end já usa
+        minhasFanfics = dadosDoBanco.map(fic => ({
+            nome: fic.titulo, // <--- Conversão essencial para não quebrar seu HTML/PDF
+            autor: fic.autor,
+            plataforma: fic.plataforma,
+            link: fic.link
+        }));
+        
+        renderizarEstante();
+    } catch (error) {
+        console.error("Erro ao carregar dados do Neon:", error);
+        alert("Não foi possível carregar a estante do banco de dados. O servidor está rodando?");
+    }
+}
+
 function validarLinkFanfic(linkDigitado) {
-    // 1. Verifica se a pessoa deixou o campo vazio
     if (!linkDigitado || linkDigitado.trim() === "") {
         alert("Por favor, insira o link da fanfic!");
         return false;
     }
 
-    // 2. Lista das plataformas aceitas (Vírgula corrigida aqui!)
     const plataformasPermitidas = [
         "archiveofourown.org",
         "wattpad.com",
@@ -27,7 +43,6 @@ function validarLinkFanfic(linkDigitado) {
         "x.com"
     ];
 
-    // 3. Verifica se o texto digitado contém o nome de alguma das plataformas
     const linkEhValido = plataformasPermitidas.some(plataforma => 
         linkDigitado.toLowerCase().includes(plataforma)
     );
@@ -37,10 +52,11 @@ function validarLinkFanfic(linkDigitado) {
         return false;
     }
 
-    return true; // Link é válido!
+    return true;
 }
 
-function adicionarFanfic() {
+// Atualizado para salvar no Banco de Dados
+async function adicionarFanfic() {
     const nome = document.getElementById('nome').value;
     const autor = document.getElementById('autor').value;
     const plataforma = document.getElementById('plataforma').value;
@@ -48,22 +64,37 @@ function adicionarFanfic() {
 
     if(!nome || !autor) return alert("Nome e Autor são obrigatórios!");
 
-    // Chama a nossa nova validação de link aqui!
-    // Se a função retornar false, a execução para e a fanfic não é salva.
     if (!validarLinkFanfic(link)) {
         return; 
     }
 
     const novaFanfic = { nome, autor, plataforma, link };
-    minhasFanfics.push(novaFanfic);
     
-    salvarERenderizar();
-    
-    // Limpa os campos
-    document.getElementById('nome').value = '';
-    document.getElementById('autor').value = '';
-    document.getElementById('plataforma').value = '';
-    document.getElementById('link').value = '';
+    // Envia os dados para o Neon via método POST
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                titulo: novaFanfic.nome, // Envia como 'titulo' para bater com o banco
+                autor: novaFanfic.autor,
+                plataforma: novaFanfic.plataforma,
+                link: novaFanfic.link
+            })
+        });
+
+        // Atualiza a lista local recarregando do banco
+        await carregarEstanteDoBanco();
+        
+        // Limpa os campos
+        document.getElementById('nome').value = '';
+        document.getElementById('autor').value = '';
+        document.getElementById('plataforma').value = '';
+        document.getElementById('link').value = '';
+    } catch (error) {
+        console.error("Erro ao salvar no banco:", error);
+        alert("Erro ao salvar a fanfic no banco de dados.");
+    }
 }
 
 async function buscarNaAPI() {
@@ -105,18 +136,33 @@ async function buscarNaAPI() {
         console.error(error);
     }
 }
-
-function confirmarAdicaoDaAPI() {
+// Atualizado para persistir o livro buscado direto no banco
+async function confirmarAdicaoDaAPI() {
     if(obraEncontradaTemporaria) {
-        minhasFanfics.push(obraEncontradaTemporaria);
-        salvarERenderizar();
-        document.getElementById('resultado-api').innerHTML = "✨ Adicionado com sucesso!";
-        obraEncontradaTemporaria = null;
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    titulo: obraEncontradaTemporaria.nome,
+                    autor: obraEncontradaTemporaria.autor,
+                    plataforma: obraEncontradaTemporaria.plataforma,
+                    link: obraEncontradaTemporaria.link
+                })
+            });
+
+            await carregarEstanteDoBanco();
+            document.getElementById('resultado-api').innerHTML = "✨ Adicionado com sucesso!";
+            obraEncontradaTemporaria = null;
+        } catch (error) {
+            console.error("Erro ao adicionar da API para o banco:", error);
+            alert("Erro ao salvar o livro no banco de dados.");
+        }
     }
 }
 
+// Substituído o localStorage: Agora ele apenas força a renderização visual
 function salvarERenderizar() {
-    localStorage.setItem('fos_database', JSON.stringify(minhasFanfics));
     renderizarEstante();
 }
 
@@ -127,7 +173,7 @@ function renderizarEstante() {
     document.getElementById('total-obras').textContent = minhasFanfics.length;
 
     if(minhasFanfics.length === 0) {
-        estante.innerHTML = "<p style='color: var(--texto-secundario);'>Sua estante local está vazia.</p>";
+        estante.innerHTML = "<p style='color: var(--texto-secundario);'>Sua estante remota está vazia.</p>";
         return;
     }
 
@@ -159,12 +205,15 @@ function exportarParaPDF() {
     doc.setFillColor(11, 7, 20);
     doc.rect(0, 0, 210, 297, 'F');
 
+    const tituloPersonalizado = document.getElementById('titulo-pdf').value.trim();
+    const tituloPDF = tituloPersonalizado || 'Fics On Shelf';
+
     doc.setFillColor(...roxo);
     doc.rect(0, 0, 210, 30, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('Fics On Shelf', 105, 13, { align: 'center' });
+    doc.text(tituloPDF, 105, 13, { align: 'center' });
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(220, 200, 255);
@@ -238,14 +287,23 @@ function exportarParaPDF() {
         doc.text(`FOS - Fics On Shelf  |  Página ${p} de ${totalPaginas}`, 105, 293, { align: 'center' });
     }
 
-    doc.save('minha_estante_FOS.pdf');
+    const nomeArquivo = tituloPersonalizado
+        ? tituloPersonalizado.replace(/[^a-zA-Z0-9À-ÿ _-]/g, '').trim().replace(/\s+/g, '_') + '.pdf'
+        : 'minha_estante_FOS.pdf';
+    doc.save(nomeArquivo || 'minha_estante_FOS.pdf');
 }
 
-function limparEstante() {
-    if(confirm('⚠️ ATENÇÃO: Isso apagará TODAS as fanfics da sua estante permanentemente. Tem certeza?')) {
-        minhasFanfics = [];
-        salvarERenderizar();
-        alert('🗑️ Estante limpa com sucesso!');
+// Limpa os dados do banco enviando uma requisição DELETE (Opcional)
+async function limparEstante() {
+    if(confirm('⚠️ ATENÇÃO: Isso apagará TODAS as fanfics do seu banco de dados permanenteness. Tem certeza?')) {
+        try {
+            await fetch(API_URL, { method: 'DELETE' });
+            await carregarEstanteDoBanco();
+            alert('🗑️ Banco de dados limpo com sucesso!');
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao tentar limpar o banco.");
+        }
     }
 }
 
