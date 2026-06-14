@@ -136,7 +136,6 @@ async function buscarNaAPI() {
         console.error(error);
     }
 }
-
 // Atualizado para persistir o livro buscado direto no banco
 async function confirmarAdicaoDaAPI() {
     if(obraEncontradaTemporaria) {
@@ -306,4 +305,8 @@ async function limparEstante() {
             alert("Erro ao tentar limpar o banco.");
         }
     }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { validarLinkFanfic };
 }
