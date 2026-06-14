@@ -248,3 +248,7 @@ function limparEstante() {
         alert('🗑️ Estante limpa com sucesso!');
     }
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { validarLinkFanfic };
+}
